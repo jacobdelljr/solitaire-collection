@@ -1,0 +1,42 @@
+# Maven build output
+**/target/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# VS Code (local workspace settings)
+.vscode/
+
+# Java compiled files and archives
+*.class
+*.log
+hs_err_pid*
+replay_pid*
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Temporary and backup files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+
+# Local environment configuration
+.env
+.env.*
+!.env.example
+
+# Test and coverage temporary output
+*.exec
+
+# Do not ignore source assets (PNG/SVG), Maven wrapper,
+# pom.xml, documentation, tests, or GitHub workflows.

@@ -1,0 +1,104 @@
+@startuml
+ title Solitaire Collection - Initial Game Logic Design
+ skinparam classAttributeIconSize 0
+ skinparam shadowing false
+ left to right direction
+
+ enum Suit {
+   CLUBS
+   DIAMONDS
+   HEARTS
+   SPADES
+ }
+
+ class Card {
+   - suit: Suit
+   - rank: int
+   - faceUp: boolean
+   + Card(suit: Suit, rank: int)
+   + getSuit(): Suit
+   + getRank(): int
+   + isFaceUp(): boolean
+   + setFaceUp(faceUp: boolean): void
+   + isRed(): boolean
+ }
+
+ class Deck {
+   - cards: List<Card>
+   + createStandardDeck(): Deck {static}
+   + createSpiderDeck(suitCount: int): Deck {static}
+   + shuffle(): void
+   + draw(): Card
+   + size(): int
+ }
+
+ class CardPile {
+   - cards: List<Card>
+   + peek(): Card
+   + size(): int
+   + isEmpty(): boolean
+   + getCards(): List<Card>
+   + addCards(cards: List<Card>): void
+   + removeTopCards(count: int): List<Card>
+ }
+
+ abstract class SolitaireGame {
+   # tableau: List<CardPile>
+   - undoHistory: Deque<GameSnapshot>
+   - moveCount: int
+   + startNewGame(): void
+   + moveCards(from: CardPile, to: CardPile, count: int): boolean
+   + canMove(from: CardPile, to: CardPile, count: int): boolean {abstract}
+   + undo(): boolean
+   + getMoveCount(): int
+   + isWon(): boolean {abstract}
+ }
+
+ class KlondikeGame {
+   - drawCount: int
+   - stock: CardPile
+   - waste: CardPile
+   - foundations: List<CardPile>
+   + KlondikeGame(drawCount: int)
+   + drawFromStock(): boolean
+   + recycleStock(): boolean
+   + canMove(from: CardPile, to: CardPile, count: int): boolean
+   + isWon(): boolean
+ }
+
+ class SpiderGame {
+   - suitCount: int
+   - stock: CardPile
+   - completedRuns: int
+   + SpiderGame(suitCount: int)
+   + dealNextRow(): boolean
+   + removeCompletedRuns(): int
+   + canMove(from: CardPile, to: CardPile, count: int): boolean
+   + isWon(): boolean
+ }
+
+ class GameSnapshot {
+   - pileStates: List<List<Card>>
+   - faceUpStates: List<List<Boolean>>
+   - moveCount: int
+   - completedRuns: int
+   + capture(game: SolitaireGame): GameSnapshot {static}
+   + restore(game: SolitaireGame): void
+ }
+
+ Card --> Suit
+ Deck *-- "0..*" Card
+ CardPile *-- "0..*" Card
+ SolitaireGame *-- "7 or 10" CardPile : tableau
+ SolitaireGame *-- "0..*" GameSnapshot : undo history
+ KlondikeGame --|> SolitaireGame
+ SpiderGame --|> SolitaireGame
+ KlondikeGame *-- "1" CardPile : stock
+ KlondikeGame *-- "1" CardPile : waste
+ KlondikeGame *-- "4" CardPile : foundations
+ SpiderGame *-- "1" CardPile : stock
+ note right of SolitaireGame
+   Game rules and state only.
+   JavaFX views and drag/drop remain separate.
+ end note
+@enduml
