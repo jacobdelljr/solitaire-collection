@@ -3,7 +3,17 @@ package com.jd.solitaireapp;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Console demonstration of implemented Klondike and Spider operations, without UI.
+ * Shuffled decks make output vary. The implicit public constructor has no setup;
+ * the demonstration is run through {@link #main(String[])}.
+ */
 public class Main {
+    /**
+     * Prints initial layouts, representative legal/rejected actions, stock
+     * operations, move counts, completion status, and deferred-feature notices.
+     * @param args command-line arguments, ignored
+     */
     public static void main(String[] args) {
         System.out.println("Solitaire Collection - Step 4 console demonstration");
         KlondikeGame klondike = new KlondikeGame(1);
@@ -37,10 +47,20 @@ public class Main {
         System.out.println("\nStep 6 deferred: Turn 3, multi-suit Spider, and GameSnapshot/undo.");
     }
 
+    /**
+     * Collects current tableau sizes for display.
+     * @param game game whose tableau is inspected
+     * @return an unmodifiable list of sizes in column order
+     */
     private static List<Integer> sizes(SolitaireGame game) {
         return game.getTableau().stream().map(CardPile::size).toList();
     }
 
+    /**
+     * Formats an exposed card without revealing a face-down card's identity.
+     * @param card card to describe, or null for an empty pile
+     * @return rank and suit, "face down", or "empty pile"
+     */
     private static String describe(Card card) {
         if (card == null) { return "empty pile"; }
         if (!card.isFaceUp()) { return "face down"; }
@@ -54,6 +74,13 @@ public class Main {
         return rank + " of " + card.getSuit();
     }
 
+    /**
+     * Executes and prints the first legal transfer found, or prints that none exists.
+     * Searches sources, destinations, then positive segment sizes in order.
+     * @param game game used to validate and execute the transfer
+     * @param sources candidate source piles
+     * @param destinations candidate destination piles
+     */
     private static void demonstrateMove(SolitaireGame game, List<CardPile> sources,
                                         List<CardPile> destinations) {
         for (CardPile from : sources) {

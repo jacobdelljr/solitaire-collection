@@ -4,12 +4,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Turn 1 Klondike with seven tableau columns, four foundations, and unlimited
+ * stock recycling. Tableau builds down in alternating colors; foundations build
+ * up by suit from Ace to King. Turn 3 and inherited undo are deferred to Step 6.
+ */
 public class KlondikeGame extends SolitaireGame {
+    /** Cards per stock draw; always 1 in the implemented configuration. */
     private final int drawCount;
+    /** Face-down cards available for drawing. */
     private final CardPile stock = new CardPile();
+    /** Drawn face-up cards; only the top card may be moved. */
     private final CardPile waste = new CardPile();
+    /** Four foundations, each acquiring its suit from its first Ace. */
     private final List<CardPile> foundations = new ArrayList<>();
 
+    /**
+     * Creates and deals a shuffled Turn 1 game.
+     * @param drawCount cards per draw; only 1 is implemented
+     * @throws UnsupportedOperationException if drawCount is 3 (Step 6)
+     * @throws IllegalArgumentException if drawCount is neither 1 nor 3
+     */
     public KlondikeGame(int drawCount) {
         if (drawCount == 3) {
             throw new UnsupportedOperationException("Klondike Turn 3 is deferred to Step 6");
@@ -21,6 +36,12 @@ public class KlondikeGame extends SolitaireGame {
         startNewGame();
     }
 
+    /**
+     * Resets shared state and deals a shuffled 52-card deck into seven new columns
+     * of 1–7 cards, with only each top card face up. Creates four empty foundations,
+     * clears the waste, and fills the stock with the remaining 24 face-down cards.
+     * Previously returned tableau/foundation pile objects no longer belong to this game.
+     */
     @Override
     public void startNewGame() {
         super.startNewGame();
@@ -41,10 +62,18 @@ public class KlondikeGame extends SolitaireGame {
         while (deck.size() > 0) { stock.addCards(List.of(deck.draw())); }
     }
 
+    /** @return the mutable stock pile; use stock operations to preserve game rules */
     public CardPile getStock() { return stock; }
+    /** @return the mutable waste pile; use game operations to move its top card */
     public CardPile getWaste() { return waste; }
+    /** @return an unmodifiable live list of the four mutable foundation piles */
     public List<CardPile> getFoundations() { return Collections.unmodifiableList(foundations); }
 
+    /**
+     * Moves one stock card face up onto the waste and counts one move.
+     * Does not automatically recycle an exhausted stock.
+     * @return true if drawn; false without mutation if the stock is empty
+     */
     public boolean drawFromStock() {
         if (stock.isEmpty()) { return false; }
         List<Card> drawn = stock.removeTopCards(drawCount);
@@ -54,7 +83,12 @@ public class KlondikeGame extends SolitaireGame {
         return true;
     }
 
-    /** Unlimited redeals; reversing the waste preserves the original draw order. */
+    /**
+     * Turns the entire waste face down into an empty stock, reversing pile order
+     * so remaining cards repeat their prior draw order. Counts one move on success;
+     * there is no limit on recycling.
+     * @return true if recycled; false without mutation if stock is nonempty or waste empty
+     */
     public boolean recycleStock() {
         if (!stock.isEmpty() || waste.isEmpty()) { return false; }
         List<Card> recycled = waste.removeTopCards(waste.size());
@@ -65,6 +99,20 @@ public class KlondikeGame extends SolitaireGame {
         return true;
     }
 
+    /**
+     * Validates a transfer without mutation. Tableau segments must be face-up,
+     * descending, and alternating in color. A tableau destination accepts a King
+     * in an empty column or a card one rank below and opposite in color to its
+     * face-up top. Only one top waste or foundation card may leave those piles.
+     * Foundations accept a single tableau/waste Ace when empty, otherwise the next
+     * rank of the same suit on a face-up top. Foundation-to-foundation transfers,
+     * stock transfers, and moves into waste are rejected.
+     * @param from source tableau, waste, or foundation pile of this game
+     * @param to destination tableau or foundation pile of this game
+     * @param count positive number of top cards to transfer
+     * @return true if legal; false for rule violations, null/foreign/identical
+     *         piles, or a count outside the source's available cards
+     */
     @Override
     public boolean canMove(CardPile from, CardPile to, int count) {
         if (from == null || to == null || from == to || count <= 0 || count > from.size()) {
@@ -100,6 +148,11 @@ public class KlondikeGame extends SolitaireGame {
         return false;
     }
 
+    /**
+     * Checks foundation sizes, assuming cards reached them through legal moves.
+     * Does not revalidate ranks, suits, or the rest of the game state.
+     * @return true if there are four foundations containing 13 cards each
+     */
     @Override
     public boolean isWon() {
         return foundations.size() == 4 && foundations.stream().allMatch(pile -> pile.size() == 13);
