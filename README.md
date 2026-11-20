@@ -31,7 +31,7 @@ The application will use a simple interface with a dark green playing surface. T
 
 The game logic will be separate from the JavaFX interface so it can be tested independently. Both game modes will share core classes for cards and piles, while Klondike and Spider will implement their own rules.
 
-The initial object-oriented design is documented in [solitaire-collection.puml](solitaire-collection.puml). The diagram includes the game classes, their methods, and their relationships. It does not include JavaFX components.
+The object-oriented design is documented in [solitaire-collection.puml](docs/solitaire-collection.puml). The diagram includes the game classes, their methods, and their relationships. It does not include JavaFX components.
 
 ## Technology
 
@@ -49,4 +49,6 @@ The project will be built in stages, beginning with the underlying game logic an
 
 ## Status
 
-Initial design. Implementation has not started.
+Step 4 game logic is implemented in `solitaire-app`, using Java 23. See
+[Step 4 implementation notes](docs/step-4.md) for supported rules, API conventions,
+explicit UML additions, deferred Step 6 features, and console build/run commands.

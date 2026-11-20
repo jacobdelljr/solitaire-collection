@@ -1,5 +1,5 @@
 @startuml
- title Solitaire Collection - Initial Game Logic Design
+ title Solitaire Collection - Step 4 Game Logic Design
  skinparam classAttributeIconSize 0
  skinparam shadowing false
  left to right direction
@@ -47,6 +47,9 @@
    - undoHistory: Deque<GameSnapshot>
    - moveCount: int
    + startNewGame(): void
+   + getTableau(): List<CardPile>
+   # recordMove(): void
+   # afterMove(): void
    + moveCards(from: CardPile, to: CardPile, count: int): boolean
    + canMove(from: CardPile, to: CardPile, count: int): boolean {abstract}
    + undo(): boolean
@@ -60,6 +63,10 @@
    - waste: CardPile
    - foundations: List<CardPile>
    + KlondikeGame(drawCount: int)
+   + startNewGame(): void
+   + getStock(): CardPile
+   + getWaste(): CardPile
+   + getFoundations(): List<CardPile>
    + drawFromStock(): boolean
    + recycleStock(): boolean
    + canMove(from: CardPile, to: CardPile, count: int): boolean
@@ -71,6 +78,11 @@
    - stock: CardPile
    - completedRuns: int
    + SpiderGame(suitCount: int)
+   + startNewGame(): void
+   + getStock(): CardPile
+   + getCompletedRuns(): int
+   # afterMove(): void
+   - hasCompletedRun(pile: CardPile): boolean
    + dealNextRow(): boolean
    + removeCompletedRuns(): int
    + canMove(from: CardPile, to: CardPile, count: int): boolean
@@ -87,6 +99,16 @@
  }
 
  Card --> Suit
+ note bottom of GameSnapshot
+   Step 6 only: snapshot fields, capture/restore, and undo.
+   Step 4 methods throw UnsupportedOperationException.
+ end note
+ note bottom of KlondikeGame
+   Turn 1 implemented. Turn 3 deferred to Step 6.
+ end note
+ note bottom of SpiderGame
+   One suit implemented. Two/four suits deferred to Step 6.
+ end note
  Deck *-- "0..*" Card
  CardPile *-- "0..*" Card
  SolitaireGame *-- "7 or 10" CardPile : tableau
