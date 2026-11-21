@@ -29,24 +29,26 @@ public class Deck {
     }
 
     /**
-     * Creates an unshuffled, face-down one-suit Spider deck: eight distinct
-     * cards of each rank, all Spades. Multi-suit decks are deferred to Step 6.
-     * @param suitCount number of suits; only 1 is implemented
-     * @return a new 104-card one-suit deck
-     * @throws UnsupportedOperationException if suitCount is 2 or 4
+     * Creates an unshuffled, face-down Spider deck with 104 distinct cards.
+     * One suit uses eight copies of each Spade; two suits use four copies of
+     * each Spade and Heart; four suits use two copies of each rank in every suit.
+     * @param suitCount number of suits: 1, 2, or 4
+     * @return a new 104-card Spider deck
      * @throws IllegalArgumentException if suitCount is not 1, 2, or 4
      */
     public static Deck createSpiderDeck(int suitCount) {
-        if (suitCount == 2 || suitCount == 4) {
-            throw new UnsupportedOperationException("Multi-suit Spider is deferred to Step 6");
-        }
-        if (suitCount != 1) {
-            throw new IllegalArgumentException("Spider suit count must be 1, 2, or 4");
-        }
+        Suit[] suits = switch (suitCount) {
+            case 1 -> new Suit[]{Suit.SPADES};
+            case 2 -> new Suit[]{Suit.SPADES, Suit.HEARTS};
+            case 4 -> Suit.values();
+            default -> throw new IllegalArgumentException("Spider suit count must be 1, 2, or 4");
+        };
         Deck deck = new Deck();
-        for (int copy = 0; copy < 8; copy++) {
-            for (int rank = 1; rank <= 13; rank++) {
-                deck.cards.add(new Card(Suit.SPADES, rank));
+        for (int copy = 0; copy < 8 / suitCount; copy++) {
+            for (Suit suit : suits) {
+                for (int rank = 1; rank <= 13; rank++) {
+                    deck.cards.add(new Card(suit, rank));
+                }
             }
         }
         return deck;

@@ -3,13 +3,13 @@ package com.jd.solitaireapp;
 import java.util.List;
 
 /**
- * One-suit Spider with 104 Spades, ten tableau columns, and stock row deals.
+ * One-, two-, or four-suit Spider with 104 cards, ten tableau columns, and stock row deals.
  * Exposed descending same-suit segments can move; completed King-to-Ace runs
  * are removed automatically after transfers and row deals. Eight removed runs
- * wins. Two/four-suit configurations and inherited undo are deferred to Step 6.
+ * wins. Inherited undo remains deferred.
  */
 public class SpiderGame extends SolitaireGame {
-    /** Configured suit count; always 1 in the implemented game. */
+    /** Configured suit count: 1, 2, or 4; preserved across resets. */
     private final int suitCount;
     /** Remaining face-down cards, dealt ten at a time. */
     private final CardPile stock = new CardPile();
@@ -17,16 +17,12 @@ public class SpiderGame extends SolitaireGame {
     private int completedRuns;
 
     /**
-     * Creates and deals a shuffled one-suit game.
-     * @param suitCount number of suits; only 1 is implemented
-     * @throws UnsupportedOperationException if suitCount is 2 or 4 (Step 6)
+     * Creates and deals a shuffled Spider game with the configured suits.
+     * @param suitCount number of suits: 1, 2, or 4
      * @throws IllegalArgumentException if suitCount is not 1, 2, or 4
      */
     public SpiderGame(int suitCount) {
-        if (suitCount == 2 || suitCount == 4) {
-            throw new UnsupportedOperationException("Multi-suit Spider is deferred to Step 6");
-        }
-        if (suitCount != 1) {
+        if (suitCount != 1 && suitCount != 2 && suitCount != 4) {
             throw new IllegalArgumentException("Spider suit count must be 1, 2, or 4");
         }
         this.suitCount = suitCount;
@@ -82,7 +78,7 @@ public class SpiderGame extends SolitaireGame {
      * entirely face up, descend by one rank per card, and share one suit.
      * Its bottom card may enter any empty column or lie on a face-up card one
      * rank higher; the destination's suit is not checked. Stock cannot be moved
-     * through this method. Multi-suit game creation remains unsupported.
+     * through this method.
      * @param from source tableau pile of this game
      * @param to destination tableau pile of this game
      * @param count positive number of top cards to transfer
