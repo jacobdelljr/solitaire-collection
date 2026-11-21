@@ -27,10 +27,15 @@ public final class AppNavigator {
     }
 
     private void showGame(GameMode mode) {
-        // Replace this view with a board accepting the selected mode in the next stage.
-        GamePlaceholderView placeholder = new GamePlaceholderView(mode, () -> showMenu(mode));
-        root.getChildren().setAll(placeholder);
-        Platform.runLater(placeholder::focusBackButton);
+        GameBoardView board = switch (mode) {
+            case KLONDIKE_TURN_ONE -> new KlondikeBoardView(mode, 1, () -> showMenu(mode));
+            case KLONDIKE_TURN_THREE -> new KlondikeBoardView(mode, 3, () -> showMenu(mode));
+            case SPIDER_ONE_SUIT -> new SpiderBoardView(mode, 1, () -> showMenu(mode));
+            case SPIDER_TWO_SUITS -> new SpiderBoardView(mode, 2, () -> showMenu(mode));
+            case SPIDER_FOUR_SUITS -> new SpiderBoardView(mode, 4, () -> showMenu(mode));
+        };
+        root.getChildren().setAll(board);
+        Platform.runLater(board::focusBackButton);
     }
 
     private void showMenu(GameMode previousMode) {
