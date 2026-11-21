@@ -1,5 +1,5 @@
 @startuml
- title Solitaire Collection - Step 4 Game Logic Design
+ title Solitaire Collection - Current Game Logic
  skinparam classAttributeIconSize 0
  skinparam shadowing false
  left to right direction
@@ -25,6 +25,7 @@
 
  class Deck {
    - cards: List<Card>
+   - Deck()
    + createStandardDeck(): Deck {static}
    + createSpiderDeck(suitCount: int): Deck {static}
    + shuffle(): void
@@ -89,25 +90,25 @@
    + isWon(): boolean
  }
 
- class GameSnapshot {
-   - pileStates: List<List<Card>>
-   - faceUpStates: List<List<Boolean>>
-   - moveCount: int
-   - completedRuns: int
+ class GameSnapshot <<final>> {
+   - GameSnapshot()
    + capture(game: SolitaireGame): GameSnapshot {static}
    + restore(game: SolitaireGame): void
  }
 
+ class Main {
+   + main(args: String[]): void {static}
+   - sizes(game: SolitaireGame): List<Integer> {static}
+   - describe(card: Card): String {static}
+   - demonstrateMove(game: SolitaireGame, sources: List<CardPile>, destinations: List<CardPile>): void {static}
+ }
+
  Card --> Suit
  note bottom of GameSnapshot
-   Step 6 only: snapshot fields, capture/restore, and undo.
-   Step 4 methods throw UnsupportedOperationException.
- end note
- note bottom of KlondikeGame
-   Turn 1 implemented. Turn 3 deferred to Step 6.
- end note
- note bottom of SpiderGame
-   One suit implemented. Two/four suits deferred to Step 6.
+   No stored state or owning-game reference.
+   capture() and restore() throw UnsupportedOperationException.
+   undoHistory is owned by SolitaireGame, never populated,
+   and cleared by startNewGame(); undo() also throws.
  end note
  Deck *-- "0..*" Card
  CardPile *-- "0..*" Card
@@ -119,6 +120,11 @@
  KlondikeGame *-- "1" CardPile : waste
  KlondikeGame *-- "4" CardPile : foundations
  SpiderGame *-- "1" CardPile : stock
+ GameSnapshot ..> SolitaireGame : capture / restore parameters
+ KlondikeGame ..> Deck : creates
+ SpiderGame ..> Deck : creates
+ Main ..> KlondikeGame : demonstrates Turn 1
+ Main ..> SpiderGame : demonstrates one suit
  note right of SolitaireGame
    Game rules and state only.
    JavaFX views and drag/drop remain separate.
