@@ -38,11 +38,11 @@ class KlondikeGameTest {
 
     @Test void constructorDealsCompleteStandardGame() { assertInitialGame(new KlondikeGame(1)); }
 
-    @Test void invalidDrawCountsAreRejectedAndTurnThreeIsDeferred() {
+    @Test void invalidDrawCountsAreRejectedAndTurnThreeIsSupported() {
         for (int count : new int[]{-1, 0, 2, 4, Integer.MAX_VALUE}) {
             assertThrows(IllegalArgumentException.class, () -> new KlondikeGame(count));
         }
-        assertThrows(UnsupportedOperationException.class, () -> new KlondikeGame(3));
+        assertInitialGame(assertDoesNotThrow(() -> new KlondikeGame(3)));
     }
 
     @Test void alternatingDescendingSegmentMovesInOrderAndRevealsSource() {
