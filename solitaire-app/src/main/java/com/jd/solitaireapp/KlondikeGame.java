@@ -5,12 +5,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Turn 1 Klondike with seven tableau columns, four foundations, and unlimited
+ * Turn 1 or Turn 3 Klondike with seven tableau columns, four foundations, and unlimited
  * stock recycling. Tableau builds down in alternating colors; foundations build
- * up by suit from Ace to King. Turn 3 and inherited undo are deferred to Step 6.
+ * up by suit from Ace to King. Inherited undo remains deferred to Step 6.
  */
 public class KlondikeGame extends SolitaireGame {
-    /** Cards per stock draw; always 1 in the implemented configuration. */
+    /** Maximum cards per stock draw; either 1 or 3. */
     private final int drawCount;
     /** Face-down cards available for drawing. */
     private final CardPile stock = new CardPile();
@@ -20,16 +20,12 @@ public class KlondikeGame extends SolitaireGame {
     private final List<CardPile> foundations = new ArrayList<>();
 
     /**
-     * Creates and deals a shuffled Turn 1 game.
-     * @param drawCount cards per draw; only 1 is implemented
-     * @throws UnsupportedOperationException if drawCount is 3 (Step 6)
+     * Creates and deals a shuffled Turn 1 or Turn 3 game.
+     * @param drawCount maximum cards per draw; either 1 or 3
      * @throws IllegalArgumentException if drawCount is neither 1 nor 3
      */
     public KlondikeGame(int drawCount) {
-        if (drawCount == 3) {
-            throw new UnsupportedOperationException("Klondike Turn 3 is deferred to Step 6");
-        }
-        if (drawCount != 1) {
+        if (drawCount != 1 && drawCount != 3) {
             throw new IllegalArgumentException("Draw count must be 1 or 3");
         }
         this.drawCount = drawCount;
@@ -40,6 +36,7 @@ public class KlondikeGame extends SolitaireGame {
      * Resets shared state and deals a shuffled 52-card deck into seven new columns
      * of 1–7 cards, with only each top card face up. Creates four empty foundations,
      * clears the waste, and fills the stock with the remaining 24 face-down cards.
+     * Retains the configured draw count.
      * Previously returned tableau/foundation pile objects no longer belong to this game.
      */
     @Override
@@ -70,13 +67,16 @@ public class KlondikeGame extends SolitaireGame {
     public List<CardPile> getFoundations() { return Collections.unmodifiableList(foundations); }
 
     /**
-     * Moves one stock card face up onto the waste and counts one move.
+     * Moves up to the configured draw count of stock cards face up onto the waste
+     * in top-first stock order, leaving the last drawn card on top of the waste.
+     * Draws all remaining cards if fewer are available and counts one move per action.
      * Does not automatically recycle an exhausted stock.
      * @return true if drawn; false without mutation if the stock is empty
      */
     public boolean drawFromStock() {
         if (stock.isEmpty()) { return false; }
-        List<Card> drawn = stock.removeTopCards(drawCount);
+        List<Card> drawn = stock.removeTopCards(Math.min(drawCount, stock.size()));
+        Collections.reverse(drawn);
         drawn.forEach(card -> card.setFaceUp(true));
         waste.addCards(drawn);
         recordMove();
