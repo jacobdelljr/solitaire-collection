@@ -10,18 +10,18 @@ import java.util.List;
  * JavaFX-independent base for tableau games, shared transfers, and move counting.
  * The implicit constructor creates empty shared state; concrete games deal their
  * own layouts. Clients should use game operations: exposed piles and cards remain
- * mutable, and direct edits bypass rules and counters. Undo is deferred to Step 6.
+ * mutable, and direct edits bypass rules, counters and undo recording.
  */
 public abstract class SolitaireGame {
     /** Ordered tableau columns owned by the current game. */
     protected final List<CardPile> tableau = new ArrayList<>();
-    /** Reserved Step 6 history; currently cleared on reset but never populated. */
+    /** Positions before successful actions, with the most recent on top. */
     private final Deque<GameSnapshot> undoHistory = new ArrayDeque<>();
     /** Successful player actions since the last reset. */
     private int moveCount;
 
     /**
-     * Clears tableau references, reserved undo history, and the move count.
+     * Clears tableau references, undo history, and the move count.
      * Subclasses call this reset before rebuilding their game-specific state;
      * this base implementation does not create or deal any cards.
      */
@@ -45,6 +45,7 @@ public abstract class SolitaireGame {
      */
     public boolean moveCards(CardPile from, CardPile to, int count) {
         if (!canMove(from, to, count)) { return false; }
+        saveUndoState();
         to.addCards(from.removeTopCards(count));
         if (tableau.contains(from) && !from.isEmpty()) {
             from.peek().setFaceUp(true);
@@ -56,6 +57,13 @@ public abstract class SolitaireGame {
 
     /** Counts one successful player action; automatic flips/removals do not count. */
     protected void recordMove() { moveCount++; }
+    /** Saves one position after validation and before a successful action mutates state. */
+    protected void saveUndoState() { undoHistory.push(GameSnapshot.capture(this)); }
+    /**
+     * Restores the counter without recording an action; used only by snapshots.
+     * @param moveCount saved successful-action count
+     */
+    void restoreMoveCount(int moveCount) { this.moveCount = moveCount; }
     /** Hook after a successful counted transfer; the base implementation does nothing. */
     protected void afterMove() { }
     /**
@@ -69,12 +77,15 @@ public abstract class SolitaireGame {
      */
     public abstract boolean canMove(CardPile from, CardPile to, int count);
     /**
-     * Declares undo, which is reserved for Step 6 and does not change state.
-     * @return never returns normally; undo is not implemented
-     * @throws UnsupportedOperationException always, until Step 6
+     * Restores the position before the latest successful action, including its
+     * automatic flips and removals. Does not count a move or create new history.
+     * @return true if restored; false without mutation if history is empty
      */
     public boolean undo() {
-        throw new UnsupportedOperationException("Undo using GameSnapshot is deferred to Step 6");
+        if (undoHistory.isEmpty()) { return false; }
+        undoHistory.peek().restore(this);
+        undoHistory.pop();
+        return true;
     }
     /**
      * @return successful transfers, stock draws, recycles, and row deals since
