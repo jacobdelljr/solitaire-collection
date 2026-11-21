@@ -6,7 +6,7 @@ import java.util.List;
  * One-, two-, or four-suit Spider with 104 cards, ten tableau columns, and stock row deals.
  * Exposed descending same-suit segments can move; completed King-to-Ace runs
  * are removed automatically after transfers and row deals. Eight removed runs
- * wins. Inherited undo remains deferred.
+ * wins. Undo restores each transfer or row deal together with its automatic effects.
  */
 public class SpiderGame extends SolitaireGame {
     /** Configured suit count: 1, 2, or 4; preserved across resets. */
@@ -56,6 +56,12 @@ public class SpiderGame extends SolitaireGame {
     public int getCompletedRuns() { return completedRuns; }
 
     /**
+     * Restores the run counter without removing cards; used only by snapshots.
+     * @param completedRuns saved number of removed runs
+     */
+    void restoreCompletedRuns(int completedRuns) { this.completedRuns = completedRuns; }
+
+    /**
      * Deals one face-up stock card to each column in tableau order, counts one
      * move, and removes any completed runs. Every column must be nonempty.
      * @return true if dealt; false without mutation if fewer than ten stock
@@ -63,6 +69,7 @@ public class SpiderGame extends SolitaireGame {
      */
     public boolean dealNextRow() {
         if (stock.size() < 10 || tableau.stream().anyMatch(CardPile::isEmpty)) { return false; }
+        saveUndoState();
         for (CardPile pile : tableau) {
             List<Card> dealt = stock.removeTopCards(1);
             dealt.getFirst().setFaceUp(true);
@@ -110,7 +117,8 @@ public class SpiderGame extends SolitaireGame {
     /**
      * Removes exposed, same-suit King-to-Ace top segments from every column.
      * Each removal increments completed runs and exposes the remaining top card;
-     * that column is checked again for another run. Does not increment move count.
+     * that column is checked again for another run. Does not increment move count
+     * or create a separate undo entry; transfers and row deals capture this effect.
      * @return number of runs removed by this call, not the cumulative total
      */
     public int removeCompletedRuns() {

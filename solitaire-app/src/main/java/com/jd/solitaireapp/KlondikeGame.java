@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Turn 1 or Turn 3 Klondike with seven tableau columns, four foundations, and unlimited
  * stock recycling. Tableau builds down in alternating colors; foundations build
- * up by suit from Ace to King. Inherited undo remains deferred to Step 6.
+ * up by suit from Ace to King. Transfers, draws and recycles support undo.
  */
 public class KlondikeGame extends SolitaireGame {
     /** Maximum cards per stock draw; either 1 or 3. */
@@ -75,6 +75,7 @@ public class KlondikeGame extends SolitaireGame {
      */
     public boolean drawFromStock() {
         if (stock.isEmpty()) { return false; }
+        saveUndoState();
         List<Card> drawn = stock.removeTopCards(Math.min(drawCount, stock.size()));
         Collections.reverse(drawn);
         drawn.forEach(card -> card.setFaceUp(true));
@@ -91,6 +92,7 @@ public class KlondikeGame extends SolitaireGame {
      */
     public boolean recycleStock() {
         if (!stock.isEmpty() || waste.isEmpty()) { return false; }
+        saveUndoState();
         List<Card> recycled = waste.removeTopCards(waste.size());
         Collections.reverse(recycled);
         recycled.forEach(card -> card.setFaceUp(false));

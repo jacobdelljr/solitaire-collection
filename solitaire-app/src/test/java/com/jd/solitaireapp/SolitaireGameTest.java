@@ -79,12 +79,19 @@ class SolitaireGameTest {
         assertEquals(0, game.getMoveCount());
     }
 
-    @Test void undoAndCaptureRemainUnsupportedWithoutMutatingState() {
+    @Test void emptyUndoAndSnapshotCaptureDoNotMutateState() {
         ProbeGame game = new ProbeGame();
         set(game.source, up(1));
         Observation before = observe(game);
-        assertThrows(UnsupportedOperationException.class, game::undo);
-        assertThrows(UnsupportedOperationException.class, () -> GameSnapshot.capture(game));
+        assertFalse(game.undo());
+        assertEquals(before, observe(game));
+        GameSnapshot snapshot = GameSnapshot.capture(game);
+        assertNotNull(snapshot);
+        assertEquals(before, observe(game));
+        assertFalse(game.undo(), "Capturing a snapshot must not create undo history");
+        game.allowed = true;
+        legalMove(game, game.source, game.target, 1);
+        snapshot.restore(game);
         assertEquals(before, observe(game));
     }
 }
