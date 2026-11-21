@@ -93,8 +93,15 @@ class DeckTest {
         }
     }
 
-    @Test void multiSuitSpiderDecksRemainExplicitlyUnsupported() {
-        assertThrows(UnsupportedOperationException.class, () -> Deck.createSpiderDeck(2));
-        assertThrows(UnsupportedOperationException.class, () -> Deck.createSpiderDeck(4));
+    @Test void multiSuitSpiderDecksUseTheConfiguredSuits() {
+        for (int count : new int[]{2, 4}) {
+            List<Card> cards = drain(Deck.createSpiderDeck(count));
+            assertEquals(104, cards.size());
+            for (Suit suit : Suit.values()) {
+                int expected = count == 4 ? 26
+                        : (suit == Suit.SPADES || suit == Suit.HEARTS ? 52 : 0);
+                assertEquals(expected, cards.stream().filter(c -> c.getSuit() == suit).count());
+            }
+        }
     }
 }

@@ -50,12 +50,13 @@ class SpiderGameTest {
 
     @Test void constructorDealsCompleteOneSuitGame() { assertInitialGame(new SpiderGame(1)); }
 
-    @Test void invalidSuitCountsAreRejectedAndMultiSuitGamesRemainDeferred() {
+    @Test void invalidSuitCountsAreRejectedAndSupportedGamesCanBeCreated() {
         for (int count : new int[]{-1, 0, 3, 5, Integer.MAX_VALUE}) {
             assertThrows(IllegalArgumentException.class, () -> new SpiderGame(count));
         }
-        assertThrows(UnsupportedOperationException.class, () -> new SpiderGame(2));
-        assertThrows(UnsupportedOperationException.class, () -> new SpiderGame(4));
+        for (int count : new int[]{1, 2, 4}) {
+            assertDoesNotThrow(() -> new SpiderGame(count));
+        }
     }
 
     @Test void descendingSegmentMovesInOrderAndExposesRemainingSource() {
