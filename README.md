@@ -40,7 +40,7 @@ The application will use a simple interface with a dark green playing surface. T
 
 The game logic is independent of JavaFX and is tested with JUnit. Both game modes share core classes for cards and piles, while Klondike and Spider implement their own rules.
 
-The object-oriented design is documented in [solitaire-collection.puml](docs/solitaire-collection.puml). The diagram includes the game classes, their methods, and their relationships. It does not include JavaFX components.
+The class diagram is generated automatically from `com.jd.solitaireapp`, including JavaFX components, during Maven's `process-classes` phase. Run `.\mvnw.cmd clean test-compile` from `solitaire-app` to generate `solitaire-app/target/generated-docs/classes.puml` (path relative to the repository root).
 
 ## Technology
 
@@ -63,7 +63,7 @@ cd solitaire-app
 .\mvnw.cmd compile exec:java # Run the console demonstration
 ```
 
-On macOS/Linux, replace `.\mvnw.cmd` with `sh ./mvnw`. Reports are generated at `solitaire-app/target/site/reports/apidocs/index.html` (JavaDoc) and `solitaire-app/target/site/jacoco/index.html` (JaCoCo). GitHub Actions also runs tests and generates these reports on each push. The UML diagram is maintained separately.
+On macOS/Linux, replace `.\mvnw.cmd` with `sh ./mvnw`. Reports are generated at `solitaire-app/target/site/reports/apidocs/index.html` (JavaDoc) and `solitaire-app/target/site/jacoco/index.html` (JaCoCo). GitHub Actions also runs tests and generates these reports on each push. The generated UML diagram resides in `target` and is excluded from Git.
 
 ## Status
 
