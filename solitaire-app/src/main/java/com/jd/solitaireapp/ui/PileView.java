@@ -14,6 +14,18 @@ public final class PileView extends Pane {
     Map<Integer, CardView> cardViews() {
         return cards;
     }
+
+    /** Temporary presentation of a successful Spider deal, before automatic removals render. */
+    CardView appendDealtCard(Card card) {
+        CardView previous = cards.get(cards.size() - 1);
+        double width = previous.getWidth();
+        CardView view = new CardView(card, width);
+        view.setManaged(false);
+        view.relocate(0, previous.getLayoutY() + width * 0.25);
+        cards.put(cards.size(), view);
+        getChildren().add(view);
+        return view;
+    }
     public enum Arrangement { TOP, TABLEAU, WASTE }
 
     public PileView(CardPile pile, double width, Arrangement arrangement, int visibleWasteCards) {

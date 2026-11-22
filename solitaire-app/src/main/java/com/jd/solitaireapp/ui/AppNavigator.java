@@ -45,6 +45,7 @@ public final class AppNavigator {
         };
         activeBoard = board;
         root.getChildren().setAll(board);
+        board.beginInitialDeal();
         Platform.runLater(board::focusBackButton);
     }
 

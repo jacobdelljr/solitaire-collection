@@ -10,6 +10,18 @@ public final class CardView extends Region {
     private final ImageView image = new ImageView();
     private final Region selectionRing = new Region();
 
+    /** Presentation copy: never consult a card whose orientation may have changed. */
+    CardView(CardView source) {
+        getStyleClass().add("playing-card");
+        image.setImage(source.image.getImage());
+        image.setPreserveRatio(true);
+        image.setSmooth(true);
+        getChildren().add(image);
+        setAccessibleRole(AccessibleRole.IMAGE_VIEW);
+        setAccessibleText(source.getAccessibleText());
+        setCardWidth(source.getWidth());
+    }
+
     public CardView(Card card, double width) {
         getStyleClass().add("playing-card");
         image.setImage(CardImages.shared().forCard(card));
