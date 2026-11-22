@@ -5,7 +5,7 @@ import com.jd.solitaireapp.Card;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Ten-column Spider rendering with stock above the tableau. */
+/** Ten-column Spider rendering with fixed stock above the scrolling tableau. */
 public final class SpiderBoardView extends GameBoardView {
     private final SpiderGame spider;
 
@@ -48,6 +48,13 @@ public final class SpiderBoardView extends GameBoardView {
             bottom = Math.max(bottom, addPile(spider.getTableau().get(i), left + i * (width + gap),
                     tableauY, width, PileView.Arrangement.TABLEAU, 1, "Tableau " + (i + 1)));
         }
+        caption(fixedArea, "STOCK / DEAL ROW", 20, 0);
+        double stockBottom = addPile(fixedArea, spider.getStock(), 20, 24, width,
+                PileView.Arrangement.TOP, 1, "Stock, deal next row");
+        caption(fixedArea, "COMPLETED SEQUENCES", 20 + width + gap * 2, 0);
+        caption(fixedArea, spider.getCompletedRuns() + " / 8", 20 + width + gap * 2, 30);
+        fixedArea.setMinHeight(stockBottom + 16);
+        fixedArea.setPrefHeight(stockBottom + 16);
         return bottom;
     }
 }

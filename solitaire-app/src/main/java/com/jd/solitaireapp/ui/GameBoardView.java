@@ -27,6 +27,7 @@ import javafx.scene.input.KeyEvent;
 public abstract class GameBoardView extends BorderPane {
     protected final SolitaireGame game;
     protected final Pane surface = new Pane();
+    protected final Pane fixedArea = new Pane();
     private final ScrollPane scroll = new ScrollPane(surface);
     private final Button backButton = new Button("Return to menu");
     private final Pane dragOverlay = new Pane();
@@ -71,11 +72,7 @@ public abstract class GameBoardView extends BorderPane {
             cancelDealing();
         });
         getStyleClass().add("board-page");
-        backButton.setOnAction(event -> {
-            cancelDealing();
-            interactions.cancel();
-            onBack.run();
-        });
+        backButton.setOnAction(event -> onBack.run());
         VBox title = new VBox(5,
                 MainMenuView.label(mode.gameName().toUpperCase(Locale.ROOT), "board-title"),
                 MainMenuView.label(mode.variant().toUpperCase(Locale.ROOT), "small-label"));
@@ -92,7 +89,9 @@ public abstract class GameBoardView extends BorderPane {
         HBox header = new HBox(20, backButton, title, space, undo, newGame);
         header.setAlignment(Pos.CENTER_LEFT);
         header.getStyleClass().add("board-header");
-        setTop(header);
+        fixedArea.setVisible(columns == 10);
+        fixedArea.setManaged(columns == 10);
+        setTop(new VBox(header, fixedArea));
         scroll.getStyleClass().add("board-scroll");
         scroll.setFitToWidth(true);
         scroll.setPannable(false);
@@ -113,7 +112,7 @@ public abstract class GameBoardView extends BorderPane {
         Button again = new Button("NEW GAME");
         again.setOnAction(event -> startNewGame());
         Button menu = new Button("Return to menu");
-        menu.setOnAction(event -> { cancelDealing(); interactions.cancel(); onBack.run(); });
+        menu.setOnAction(event -> onBack.run());
         HBox options = new HBox(12, again, menu);
         completion.getChildren().addAll(MainMenuView.label("GAME COMPLETE.", "board-title"), options);
         completion.getStyleClass().add("completion-message");
@@ -138,6 +137,7 @@ public abstract class GameBoardView extends BorderPane {
         double boardWidth = Math.max(viewport, margin * 2 + columns * width + (columns - 1) * gap);
         double left = (boardWidth - columns * width - (columns - 1) * gap) / 2;
         surface.getChildren().clear();
+        fixedArea.getChildren().clear();
         double bottom = renderPiles(left, width, gap);
         surface.setMinSize(margin * 2 + columns * width + (columns - 1) * gap, bottom + 28);
         surface.setPrefSize(boardWidth, bottom + 28);
@@ -209,23 +209,38 @@ public abstract class GameBoardView extends BorderPane {
 
     protected final double addPile(CardPile pile, double x, double y, double width,
                                    PileView.Arrangement arrangement, int wasteCount, String name) {
+        return addPile(surface, pile, x, y, width, arrangement, wasteCount, name);
+    }
+
+    protected final double addPile(Pane parent, CardPile pile, double x, double y, double width,
+                                   PileView.Arrangement arrangement, int wasteCount, String name) {
         PileView view = new PileView(pile, width, arrangement, wasteCount);
         view.setManaged(false);
         view.resize(view.prefWidth(-1), view.prefHeight(-1));
         view.relocate(x, y);
         view.setAccessibleText(name + (pile.isEmpty() ? ", empty" : ""));
-        surface.getChildren().add(view);
-        pileViews.put(pile, view);
+        parent.getChildren().add(view);
         interactions.register(pile, view, pile == stockPile() ? this::playStock : null);
         return y + view.prefHeight(-1);
     }
 
     protected final void caption(String text, double x, double y) {
+        caption(surface, text, x, y);
+    }
+
+    protected final void caption(Pane parent, String text, double x, double y) {
         Label label = MainMenuView.label(text, "pile-caption");
         label.setManaged(false);
         label.autosize();
         label.relocate(x, y);
-        surface.getChildren().add(label);
+        parent.getChildren().add(label);
+    }
+
+    /** Releases transient gestures and board nodes when leaving the game. */
+    public void dispose() {
+        interactions.reset();
+        surface.getChildren().clear();
+        fixedArea.getChildren().clear();
     }
 
     public void focusBackButton() {

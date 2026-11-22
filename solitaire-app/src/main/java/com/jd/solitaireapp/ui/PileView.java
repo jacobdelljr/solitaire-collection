@@ -38,10 +38,11 @@ public final class PileView extends Pane {
         getChildren().add(outline);
         double x = 0;
         double y = 0;
+        // Render a covered predecessor for drag reveal, preserving its actual face.
         int first = switch (arrangement) {
             case TABLEAU -> 0;
-            case TOP -> Math.max(0, pile.size() - 1);
-            case WASTE -> Math.max(0, pile.size() - visibleWasteCards);
+            case TOP -> Math.max(0, pile.size() - 2);
+            case WASTE -> Math.max(0, pile.size() - visibleWasteCards - 1);
         };
         for (int i = first; i < pile.size(); i++) {
             Card card = pile.getCards().get(i);
@@ -54,7 +55,8 @@ public final class PileView extends Pane {
                 if (arrangement == Arrangement.TABLEAU) {
                     // Artwork's upper indices end at y=110 in its 500px-wide design.
                     y += card.isFaceUp() ? width * 0.25 : width * 0.16;
-                } else if (arrangement == Arrangement.WASTE) {
+                } else if (arrangement == Arrangement.WASTE
+                        && i >= pile.size() - visibleWasteCards) {
                     x += width * 0.23;
                 }
             }

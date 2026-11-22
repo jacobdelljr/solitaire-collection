@@ -87,8 +87,8 @@ final class BoardInteractions {
             CardView card = target.view().cardViews().get(index);
             if (card.contains(card.sceneToLocal(event.getSceneX(), event.getSceneY()))) {
                 Selection candidate = new Selection(target, index);
-                // A legal destination validates the whole source sequence without copying rules.
-                return targets.stream().anyMatch(to -> game.canMove(target.pile(), to.pile(), candidate.count()))
+                // Pickup checks the source only; dropping separately checks the destination.
+                return game.canPickUp(target.pile(), candidate.count())
                         ? candidate : null;
             }
         }
