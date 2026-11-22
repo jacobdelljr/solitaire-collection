@@ -1,0 +1,78 @@
+/* Logical SansSerif resolves through JavaFX on each platform, with no named OS font dependency. */
+.application {
+    -fx-font-family: "SansSerif";
+    -fx-font-size: 14px;
+    -fx-background-color: #11284B;
+}
+.page { -fx-padding: 44 64 36 64; }
+.label { -fx-text-fill: #F4F0E7; }
+.small-label { -fx-font-size: 11px; -fx-text-fill: #D0BE96; }
+.menu-body { -fx-padding: 60 0 36 0; }
+.display-title { -fx-font-size: 100px; -fx-font-weight: bold; -fx-padding: 0; }
+.description { -fx-font-size: 18px; -fx-text-fill: #F4F0E7; }
+.choices { -fx-border-color: transparent transparent #58708D transparent; -fx-border-width: 1; }
+.game-row {
+    -fx-padding: 30 0;
+    -fx-border-color: #58708D transparent transparent transparent;
+    -fx-border-width: 1;
+}
+.index { -fx-font-size: 14px; -fx-text-fill: #D0BE96; }
+.game-title { -fx-font-size: 25px; -fx-font-weight: bold; }
+.row-description { -fx-font-size: 13px; -fx-text-fill: #C4CBD5; }
+.eyebrow { -fx-font-size: 12px; -fx-text-fill: #D0BE96; }
+.button {
+    -fx-background-color: #11284B;
+    -fx-background-insets: 0;
+    -fx-background-radius: 2;
+    -fx-border-color: #8090A6;
+    -fx-border-width: 1;
+    -fx-border-radius: 2;
+    -fx-text-fill: #F4F0E7;
+    -fx-font-size: 14px;
+    -fx-padding: 13 20;
+    -fx-cursor: hand;
+}
+.mode-button { -fx-min-width: 94px; }
+.back-button { -fx-padding: 14 24; }
+.button:hover { -fx-background-color: #1C3A66; -fx-border-color: #F4F0E7; }
+.button:focused {
+    -fx-border-color: #D0BE96;
+    -fx-border-width: 2;
+    -fx-padding: 12 19;
+    -fx-background-color: #1C3A66;
+}
+.back-button:focused { -fx-padding: 13 23; }
+.button:armed { -fx-background-color: #0C1730; -fx-border-color: #C5524A; }
+.application:compact .page { -fx-padding: 32 40; }
+.application:compact .display-title { -fx-font-size: 76px; }
+.application:compact .menu-body { -fx-padding: 42 0 30 0; }
+.application:compact .game-title { -fx-font-size: 22px; }
+
+/* The artwork is the focus. Board chrome uses the same quiet editorial system. */
+.board-page { -fx-padding: 24 28 16 28; -fx-background-color: #11284B; }
+.board-header { -fx-padding: 0 0 22 0; }
+.board-title { -fx-font-size: 22px; -fx-font-weight: bold; }
+.selection-ring { -fx-border-color: transparent; -fx-border-width: 2; -fx-border-radius: 4; }
+.playing-card:selected .selection-ring { -fx-border-color: #D0BE96; }
+.dragged-cards { -fx-effect: dropshadow(gaussian, rgba(12, 23, 48, 0.45), 8, 0.1, 0, 4); }
+.card-pile:drop-target { -fx-border-color: #D0BE96; -fx-border-width: 1; }
+.completion-message { -fx-padding: 14 0 0 0; -fx-border-color: #58708D transparent transparent transparent; }
+.board-footer { -fx-padding: 16 0 0 0; -fx-font-size: 10px; }
+.pile-caption { -fx-text-fill: #C4CBD5; -fx-font-size: 10px; }
+.empty-pile { -fx-border-color: #58708D; -fx-border-width: 1; -fx-border-radius: 4; }
+.board-scroll, .board-scroll > .viewport, .board-scroll > .corner {
+    -fx-background-color: #11284B;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+.board-scroll:focused { -fx-background-insets: 0; -fx-border-color: #D0BE96; }
+.board-scroll .scroll-bar { -fx-background-color: #11284B; -fx-pref-width: 12; -fx-pref-height: 12; }
+.board-scroll .scroll-bar .track { -fx-background-color: #11284B; -fx-border-color: transparent; }
+.board-scroll .scroll-bar .thumb { -fx-background-color: #58708D; -fx-background-radius: 2; }
+.board-scroll .scroll-bar .thumb:hover { -fx-background-color: #8090A6; }
+.board-scroll .scroll-bar .increment-button, .board-scroll .scroll-bar .decrement-button {
+    -fx-background-color: transparent; -fx-padding: 3;
+}
+.board-scroll .scroll-bar .increment-arrow, .board-scroll .scroll-bar .decrement-arrow {
+    -fx-background-color: #D0BE96;
+}

@@ -123,11 +123,14 @@
         </configuration>
       </plugin>
 
-      <!-- JavaFX: configure entry point in Step 7 -->
+      <!-- Run the desktop application; exec:java remains the console entry point. -->
       <plugin>
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.8</version>
+        <configuration>
+          <mainClass>com.jd.solitaireapp.App</mainClass>
+        </configuration>
       </plugin>
 
     </plugins>
