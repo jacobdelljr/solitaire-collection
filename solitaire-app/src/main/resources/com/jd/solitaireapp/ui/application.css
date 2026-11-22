@@ -52,6 +52,11 @@
 .board-page { -fx-padding: 24 28 16 28; -fx-background-color: #11284B; }
 .board-header { -fx-padding: 0 0 22 0; }
 .board-title { -fx-font-size: 22px; -fx-font-weight: bold; }
+.selection-ring { -fx-border-color: transparent; -fx-border-width: 2; -fx-border-radius: 4; }
+.playing-card:selected .selection-ring { -fx-border-color: #D0BE96; }
+.dragged-cards { -fx-effect: dropshadow(gaussian, rgba(12, 23, 48, 0.45), 8, 0.1, 0, 4); }
+.card-pile:drop-target { -fx-border-color: #D0BE96; -fx-border-width: 1; }
+.completion-message { -fx-padding: 14 0 0 0; -fx-border-color: #58708D transparent transparent transparent; }
 .board-footer { -fx-padding: 16 0 0 0; -fx-font-size: 10px; }
 .pile-caption { -fx-text-fill: #C4CBD5; -fx-font-size: 10px; }
 .empty-pile { -fx-border-color: #58708D; -fx-border-width: 1; -fx-border-radius: 4; }

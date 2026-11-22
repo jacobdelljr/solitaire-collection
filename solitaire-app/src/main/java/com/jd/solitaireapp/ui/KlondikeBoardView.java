@@ -15,6 +15,16 @@ public final class KlondikeBoardView extends GameBoardView {
     }
 
     @Override
+    protected com.jd.solitaireapp.CardPile stockPile() {
+        return klondike.getStock();
+    }
+
+    @Override
+    protected boolean playStock() {
+        return klondike.getStock().isEmpty() ? klondike.recycleStock() : klondike.drawFromStock();
+    }
+
+    @Override
     protected double renderPiles(double left, double width, double gap) {
         double step = width + gap;
         double top = 36;

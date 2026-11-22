@@ -8,13 +8,17 @@ import javafx.scene.layout.Region;
 /** Read-only card presentation; orientation is read from the model on refresh. */
 public final class CardView extends Region {
     private final ImageView image = new ImageView();
+    private final Region selectionRing = new Region();
 
     public CardView(Card card, double width) {
+        getStyleClass().add("playing-card");
         image.setImage(CardImages.shared().forCard(card));
         image.setPreserveRatio(true);
         image.setSmooth(true);
         image.setMouseTransparent(true);
-        getChildren().add(image);
+        selectionRing.getStyleClass().add("selection-ring");
+        selectionRing.setMouseTransparent(true);
+        getChildren().addAll(image, selectionRing);
         setAccessibleRole(AccessibleRole.IMAGE_VIEW);
         setAccessibleText(card.isFaceUp()
                 ? rankName(card.getRank()) + " of " + card.getSuit().name().toLowerCase(java.util.Locale.ROOT)
@@ -33,6 +37,7 @@ public final class CardView extends Region {
     protected void layoutChildren() {
         image.setFitWidth(getWidth());
         image.setFitHeight(getHeight());
+        selectionRing.resizeRelocate(0, 0, getWidth(), getHeight());
     }
 
     private static String rankName(int rank) {

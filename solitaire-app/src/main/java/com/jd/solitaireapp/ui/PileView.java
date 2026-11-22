@@ -4,12 +4,20 @@ import com.jd.solitaireapp.Card;
 import com.jd.solitaireapp.CardPile;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /** Positions cards bottom-to-top, preserving the top-left rank and suit indices. */
 public final class PileView extends Pane {
+    private final Map<Integer, CardView> cards = new LinkedHashMap<>();
+
+    Map<Integer, CardView> cardViews() {
+        return cards;
+    }
     public enum Arrangement { TOP, TABLEAU, WASTE }
 
     public PileView(CardPile pile, double width, Arrangement arrangement, int visibleWasteCards) {
+        getStyleClass().add("card-pile");
         double height = width * 7 / 5;
         Region outline = new Region();
         outline.getStyleClass().add("empty-pile");
@@ -26,6 +34,7 @@ public final class PileView extends Pane {
         for (int i = first; i < pile.size(); i++) {
             Card card = pile.getCards().get(i);
             CardView view = new CardView(card, width);
+            cards.put(i, view);
             view.setManaged(false);
             view.relocate(x, y);
             getChildren().add(view);

@@ -13,6 +13,16 @@ public final class SpiderBoardView extends GameBoardView {
     }
 
     @Override
+    protected com.jd.solitaireapp.CardPile stockPile() {
+        return spider.getStock();
+    }
+
+    @Override
+    protected boolean playStock() {
+        return spider.dealNextRow();
+    }
+
+    @Override
     protected double renderPiles(double left, double width, double gap) {
         double bottom = 20;
         for (int i = 0; i < 10; i++) {
