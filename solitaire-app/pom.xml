@@ -60,29 +60,6 @@
         <version>3.13.0</version>
       </plugin>
 
-      <!-- Generate the class diagram from compiled application classes. -->
-      <plugin>
-        <groupId>de.elnarion.maven</groupId>
-        <artifactId>plantuml-generator-maven-plugin</artifactId>
-        <version>3.0.1</version>
-        <executions>
-          <execution>
-            <id>generate-simple-diagram</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/generated-docs</outputDirectory>
-              <outputFilename>classes.puml</outputFilename>
-              <scanPackages>
-                <scanPackage>com.jd.solitaireapp</scanPackage>
-              </scanPackages>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
       <!-- JUnit test execution -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
