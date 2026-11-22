@@ -13,6 +13,9 @@ public class App extends Application {
         primaryStage.setScene(navigator.getScene());
         primaryStage.setMinWidth(900);
         primaryStage.setMinHeight(740);
+        primaryStage.setOnCloseRequest(event -> {
+            if (!navigator.requestClose()) { event.consume(); }
+        });
         primaryStage.show();
     }
 

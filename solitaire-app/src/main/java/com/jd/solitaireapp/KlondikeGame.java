@@ -117,25 +117,9 @@ public class KlondikeGame extends SolitaireGame {
      */
     @Override
     public boolean canMove(CardPile from, CardPile to, int count) {
-        if (from == null || to == null || from == to || count <= 0 || count > from.size()) {
-            return false;
-        }
+        if (to == null || from == to || !canPickUp(from, count)) { return false; }
         boolean fromTableau = tableau.contains(from);
-        if (!fromTableau && from != waste && !foundations.contains(from)) { return false; }
-        if (!fromTableau && count != 1) { return false; }
-        List<Card> cards = from.getCards();
-        int firstIndex = cards.size() - count;
-        Card first = cards.get(firstIndex);
-        for (int i = firstIndex; i < cards.size(); i++) {
-            Card card = cards.get(i);
-            if (!card.isFaceUp()) { return false; }
-            if (i > firstIndex) {
-                Card previous = cards.get(i - 1);
-                if (previous.getRank() != card.getRank() + 1 || previous.isRed() == card.isRed()) {
-                    return false;
-                }
-            }
-        }
+        Card first = from.getCards().get(from.size() - count);
         Card top = to.peek();
         if (tableau.contains(to)) {
             return top == null ? first.getRank() == 13
@@ -148,6 +132,30 @@ public class KlondikeGame extends SolitaireGame {
                     && first.getRank() == top.getRank() + 1;
         }
         return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean canPickUp(CardPile from, int count) {
+        if (from == null || count <= 0 || count > from.size()) {
+            return false;
+        }
+        boolean fromTableau = tableau.contains(from);
+        if (!fromTableau && from != waste && !foundations.contains(from)) { return false; }
+        if (!fromTableau && count != 1) { return false; }
+        List<Card> cards = from.getCards();
+        int firstIndex = cards.size() - count;
+        for (int i = firstIndex; i < cards.size(); i++) {
+            Card card = cards.get(i);
+            if (!card.isFaceUp()) { return false; }
+            if (i > firstIndex) {
+                Card previous = cards.get(i - 1);
+                if (previous.getRank() != card.getRank() + 1 || previous.isRed() == card.isRed()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

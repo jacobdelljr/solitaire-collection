@@ -76,3 +76,8 @@
 .board-scroll .scroll-bar .increment-arrow, .board-scroll .scroll-bar .decrement-arrow {
     -fx-background-color: #D0BE96;
 }
+
+/* Leave confirmation shares the board palette and typography. */
+.leave-dialog { -fx-background-color: #11284B; -fx-padding: 24; -fx-border-color: #58708D; }
+.leave-dialog > .content { -fx-padding: 8 8 28 8; }
+.leave-dialog > .button-bar > .container { -fx-padding: 0 8 8 8; }

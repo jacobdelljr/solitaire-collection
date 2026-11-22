@@ -77,6 +77,14 @@ public abstract class SolitaireGame {
      */
     public abstract boolean canMove(CardPile from, CardPile to, int count);
     /**
+     * Checks pickup restrictions without requiring a destination or mutating state.
+     * Subclasses opt into pickup support by overriding this method.
+     * @param from source pile owned by this game
+     * @param count number of top cards to pick up
+     * @return whether the source segment may be picked up
+     */
+    public boolean canPickUp(CardPile from, int count) { return false; }
+    /**
      * Restores the position before the latest successful action, including its
      * automatic flips and removals. Does not count a move or create new history.
      * @return true if restored; false without mutation if history is empty
