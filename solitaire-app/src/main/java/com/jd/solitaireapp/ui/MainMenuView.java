@@ -16,6 +16,10 @@ import javafx.scene.layout.VBox;
 public final class MainMenuView extends BorderPane {
     private final Map<GameMode, Button> modeButtons = new EnumMap<>(GameMode.class);
 
+    /**
+     * Creates buttons for all five modes; selection is delegated to the caller.
+     * @param onSelect callback invoked with the chosen mode when a button is activated
+     */
     public MainMenuView(Consumer<GameMode> onSelect) {
         getStyleClass().add("page");
         setTop(header("SC / 001", "A COLLECTION OF CARD GAMES"));

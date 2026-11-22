@@ -26,17 +26,29 @@ public class Card {
         this.rank = rank;
     }
 
-    /** @return the fixed suit */
+    /**
+     * Returns the suit fixed at construction.
+     * @return the fixed suit
+     */
     public Suit getSuit() { return suit; }
-    /** @return the rank, with Ace equal to 1 and King equal to 13 */
+    /**
+     * Returns the fixed rank used for sequence comparisons.
+     * @return the rank, with Ace equal to 1 and King equal to 13
+     */
     public int getRank() { return rank; }
-    /** @return true if the card is face up */
+    /**
+     * Reports whether the face is currently exposed.
+     * @return true if the card is face up
+     */
     public boolean isFaceUp() { return faceUp; }
     /**
      * Sets orientation without validating any game rule.
      * @param faceUp true to expose the face, false to hide it
      */
     public void setFaceUp(boolean faceUp) { this.faceUp = faceUp; }
-    /** @return true for Hearts or Diamonds, false for Clubs or Spades */
+    /**
+     * Determines color from suit, regardless of face orientation.
+     * @return true for Hearts or Diamonds, false for Clubs or Spades
+     */
     public boolean isRed() { return suit == Suit.DIAMONDS || suit == Suit.HEARTS; }
 }

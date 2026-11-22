@@ -7,10 +7,16 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-/** Explicit development placeholder, with no simulated gameplay or model state. */
+/** Legacy development placeholder with no game state; the navigator uses playable boards instead. */
 public final class GamePlaceholderView extends BorderPane {
     private final Button backButton = new Button("Return to menu");
 
+    /**
+     * Displays the selected mode and legacy development message.
+     * @param mode mode supplying the display labels
+     * @param onBack callback invoked by the return button
+     * @throws NullPointerException if mode is null
+     */
     public GamePlaceholderView(GameMode mode, Runnable onBack) {
         getStyleClass().add("page");
         setTop(MainMenuView.header("SC / 001", "SOLITAIRE COLLECTION"));

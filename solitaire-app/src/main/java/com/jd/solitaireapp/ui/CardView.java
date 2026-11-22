@@ -5,7 +5,7 @@ import javafx.scene.AccessibleRole;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 
-/** Read-only card presentation; orientation is read from the model on refresh. */
+/** Card image and selection ring captured at construction; model changes require a new view. */
 public final class CardView extends Region {
     private final ImageView image = new ImageView();
     private final Region selectionRing = new Region();
@@ -22,6 +22,12 @@ public final class CardView extends Region {
         setCardWidth(source.getWidth());
     }
 
+    /**
+     * Captures the card's current image and accessible description without changing it.
+     * @param card card to display; later orientation changes are not observed
+     * @param width card width in layout units, with height set to seven fifths of width
+     * @throws NullPointerException if card is null
+     */
     public CardView(Card card, double width) {
         getStyleClass().add("playing-card");
         image.setImage(CardImages.shared().forCard(card));
@@ -38,6 +44,10 @@ public final class CardView extends Region {
         setCardWidth(width);
     }
 
+    /**
+     * Resizes the card and fixes its layout size at the artwork's 5:7 aspect ratio.
+     * @param width requested width in layout units
+     */
     public void setCardWidth(double width) {
         setMinSize(width, width * 7 / 5);
         setPrefSize(width, width * 7 / 5);
@@ -45,6 +55,7 @@ public final class CardView extends Region {
         resize(width, width * 7 / 5);
     }
 
+    /** Fits the artwork and selection ring to the region's current bounds. */
     @Override
     protected void layoutChildren() {
         image.setFitWidth(getWidth());

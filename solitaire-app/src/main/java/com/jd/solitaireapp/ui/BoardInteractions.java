@@ -12,7 +12,9 @@ import javafx.scene.layout.Pane;
 
 /** Shared mouse gestures. All legality and state mutations are delegated to the game. */
 final class BoardInteractions {
+    /** Model pile, its rendered view, and optional stock-click action. */
     private record Target(CardPile pile, PileView view, Runnable stockAction) { }
+    /** Bottom index of a selected top segment in its source pile. */
     private record Selection(Target source, int index) {
         int count() { return source.pile().size() - index; }
     }
@@ -29,6 +31,13 @@ final class BoardInteractions {
     private Point2D dragOrigin;
     private boolean dragging;
 
+    /**
+     * Creates gesture handling that delegates pickup and transfer rules to the model.
+     * @param game model to validate and execute moves
+     * @param overlay dedicated pane for dragged card copies
+     * @param viewport node containing the scroll viewport used for drop bounds
+     * @param afterAction callback after a successful transfer
+     */
     BoardInteractions(SolitaireGame game, Pane overlay, Node viewport, Runnable afterAction) {
         this.game = game;
         this.overlay = overlay;
@@ -36,6 +45,12 @@ final class BoardInteractions {
         this.afterAction = afterAction;
     }
 
+    /**
+     * Installs click selection and drag handlers on a rendered pile.
+     * @param pile source or destination model pile
+     * @param view view receiving mouse events
+     * @param stockAction action for stock clicks, or null for ordinary movable piles
+     */
     void register(CardPile pile, PileView view, Runnable stockAction) {
         Target target = new Target(pile, view, stockAction);
         targets.add(target);
@@ -162,6 +177,10 @@ final class BoardInteractions {
         });
     }
 
+    /**
+     * Clears selection and drag state, restores card opacity, and empties the overlay
+     * without changing model piles or undo history.
+     */
     void cancel() {
         if (selected != null) { markSelection(selected, false); }
         targets.forEach(target -> target.view().cardViews().values().forEach(view -> view.setOpacity(1)));
@@ -174,6 +193,9 @@ final class BoardInteractions {
         dragging = false;
     }
 
+    /**
+     * Cancels an active drag; otherwise clears the current press but preserves click selection.
+     */
     void cancelGesture() {
         if (dragging) {
             cancel();
@@ -184,6 +206,9 @@ final class BoardInteractions {
         }
     }
 
+    /**
+     * Cancels transient gestures and forgets registered targets before a board rebuild.
+     */
     void reset() {
         cancel();
         targets.clear();

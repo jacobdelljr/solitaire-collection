@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javafx.scene.image.Image;
 
-/** Shared, eagerly validated classpath artwork. No generated substitutes. */
+/** Shared card artwork, loaded and validated on first access to the cache. */
 public final class CardImages {
     private static final String ROOT = "/com/jd/solitaireapp/cards/png/";
     private final Map<String, Image> images = new HashMap<>();
@@ -21,14 +21,27 @@ public final class CardImages {
         load("BACK.png");
     }
 
+    /** Initializes the shared cache only when first requested. */
     private static final class Holder {
         private static final CardImages INSTANCE = new CardImages();
     }
 
+    /**
+     * Loads all faces and the back on first access, then reuses the cache.
+     * @return the shared artwork cache
+     * @throws ExceptionInInitializerError if initial loading fails, including
+     *         missing, undecodable, or incorrectly proportioned artwork
+     */
     public static CardImages shared() {
         return Holder.INSTANCE;
     }
 
+    /**
+     * Selects cached artwork using the card's current orientation.
+     * @param card card whose image is needed
+     * @return the face image if exposed, otherwise the common card back
+     * @throws NullPointerException if card is null
+     */
     public Image forCard(Card card) {
         return images.get(card.isFaceUp() ? faceName(card.getSuit(), card.getRank()) : "BACK.png");
     }

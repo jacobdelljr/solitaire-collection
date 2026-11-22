@@ -23,10 +23,22 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-/** Shared board chrome and refresh boundary. Model operations stay in the model. */
+/**
+ * Shared board controls, gesture handling, rendering, and deal animation lifecycle.
+ * Model operations determine legal play; view operations run on the JavaFX application thread.
+ */
 public abstract class GameBoardView extends BorderPane {
+    /**
+     * Model used to validate actions, restore history, and detect completion.
+     */
     protected final SolitaireGame game;
+    /**
+     * Scrollable area containing the rendered piles and captions.
+     */
     protected final Pane surface = new Pane();
+    /**
+     * Non-scrolling header area enabled for ten-column boards.
+     */
     protected final Pane fixedArea = new Pane();
     private final ScrollPane scroll = new ScrollPane(surface);
     private final Button backButton = new Button("Return to menu");
@@ -40,6 +52,14 @@ public abstract class GameBoardView extends BorderPane {
     private final VBox completion = new VBox(10);
     private final int columns;
 
+    /**
+     * Builds controls and interaction handlers; subclasses render their piles after initialization.
+     * @param mode display labels for the board
+     * @param game model backing this board
+     * @param columns tableau column count used for sizing; ten enables the fixed area
+     * @param onBack callback for menu requests
+     * @throws NullPointerException if mode is null
+     */
     protected GameBoardView(GameMode mode, SolitaireGame game, int columns, Runnable onBack) {
         this.game = game;
         this.columns = columns;
@@ -121,7 +141,11 @@ public abstract class GameBoardView extends BorderPane {
         setBottom(new VBox(8, completion, note));
     }
 
-    /** Cancels pending gestures and rebuilds presentation from the current model piles. */
+    /**
+     * Invalidates queued deals, cancels animation and gestures, and rebuilds piles
+     * from the current model at the viewport size. Does not change model state
+     * or update the completion message.
+     */
     public final void refresh() {
         dealGeneration++;
         pendingDeal = false;
@@ -143,14 +167,39 @@ public abstract class GameBoardView extends BorderPane {
         surface.setPrefSize(boardWidth, bottom + 28);
     }
 
+    /**
+     * Populates the cleared board areas with the current model piles and captions.
+     * @param left horizontal origin in layout units
+     * @param cardWidth width of each card
+     * @param gap horizontal space between columns
+     * @return bottom edge of the scrolling content in surface coordinates
+     */
     protected abstract double renderPiles(double left, double cardWidth, double gap);
 
+    /**
+     * Identifies the pile whose clicks invoke the stock action.
+     * @return the game's stock pile
+     */
     protected abstract CardPile stockPile();
 
+    /**
+     * Attempts the game-specific stock action and updates presentation on success.
+     */
     protected abstract void playStock();
 
+    /**
+     * Looks up a pile by identity in the current view map.
+     * @param pile model pile to look up
+     * @return its mapped view, or null if no entry exists
+     */
     protected final PileView pileView(CardPile pile) { return pileViews.get(pile); }
 
+    /**
+     * Animates presentation copies from the mapped stock view, then refreshes the board.
+     * Replaces any active deal; model changes must already have been applied.
+     * @param cards destination views in deal order; empty completes immediately
+     * @throws NullPointerException if cards is null, or a nonempty deal has no mapped stock view
+     */
     protected final void animateDeal(List<CardView> cards) {
         dealing.play(pileView(stockPile()), cards, this::afterAction);
     }
@@ -159,7 +208,11 @@ public abstract class GameBoardView extends BorderPane {
         if (pendingDeal || dealing.isActive()) { afterAction(); }
     }
 
-    /** Schedule after attachment/layout, and invalidate the callback on any refresh. */
+    /**
+     * Lays out and refreshes an attached board, then queues the initial tableau animation.
+     * Does nothing while detached. A refresh invalidates the queued callback;
+     * cancellation reveals the current model position without undoing the deal.
+     */
     public final void beginInitialDeal() {
         if (getScene() == null) { return; }
         getScene().getRoot().applyCss();
@@ -200,6 +253,9 @@ public abstract class GameBoardView extends BorderPane {
         beginInitialDeal();
     }
 
+    /**
+     * Refreshes the board and shows or hides the completion message from the model's win state.
+     */
     protected final void afterAction() {
         refresh();
         boolean won = game.isWon();
@@ -207,11 +263,36 @@ public abstract class GameBoardView extends BorderPane {
         completion.setManaged(won);
     }
 
+    /**
+     * Creates a pile view, adds it to the scrolling surface, and registers mouse handling.
+     * Stock piles invoke the stock action; other piles support selection and transfers.
+     * @param pile model pile to render
+     * @param x horizontal position in the parent
+     * @param y vertical position in the parent
+     * @param width card width in layout units
+     * @param arrangement layout of cards within the pile
+     * @param wasteCount visible waste positions, used only for WASTE
+     * @param name accessible pile description
+     * @return bottom edge of the view in parent coordinates
+     */
     protected final double addPile(CardPile pile, double x, double y, double width,
                                    PileView.Arrangement arrangement, int wasteCount, String name) {
         return addPile(surface, pile, x, y, width, arrangement, wasteCount, name);
     }
 
+    /**
+     * Creates a pile view, adds it to the supplied pane, and registers mouse handling.
+     * Stock piles invoke the stock action; other piles support selection and transfers.
+     * @param parent pane receiving the view
+     * @param pile model pile to render
+     * @param x horizontal position in the parent
+     * @param y vertical position in the parent
+     * @param width card width in layout units
+     * @param arrangement layout of cards within the pile
+     * @param wasteCount visible waste positions, used only for WASTE
+     * @param name accessible pile description
+     * @return bottom edge of the view in parent coordinates
+     */
     protected final double addPile(Pane parent, CardPile pile, double x, double y, double width,
                                    PileView.Arrangement arrangement, int wasteCount, String name) {
         PileView view = new PileView(pile, width, arrangement, wasteCount);
@@ -224,10 +305,23 @@ public abstract class GameBoardView extends BorderPane {
         return y + view.prefHeight(-1);
     }
 
+    /**
+     * Adds an unmanaged, styled caption to the scrolling surface.
+     * @param text caption text
+     * @param x horizontal position in the parent
+     * @param y vertical position in the parent
+     */
     protected final void caption(String text, double x, double y) {
         caption(surface, text, x, y);
     }
 
+    /**
+     * Adds an unmanaged, styled caption to the supplied pane.
+     * @param parent pane receiving the caption
+     * @param text caption text
+     * @param x horizontal position in the parent
+     * @param y vertical position in the parent
+     */
     protected final void caption(Pane parent, String text, double x, double y) {
         Label label = MainMenuView.label(text, "pile-caption");
         label.setManaged(false);
@@ -236,13 +330,19 @@ public abstract class GameBoardView extends BorderPane {
         parent.getChildren().add(label);
     }
 
-    /** Releases transient gestures and board nodes when leaving the game. */
+    /**
+     * Clears gesture targets and rendered board areas when leaving the game.
+     * Scene detachment separately cancels pending or running deal animation.
+     */
     public void dispose() {
         interactions.reset();
         surface.getChildren().clear();
         fixedArea.getChildren().clear();
     }
 
+    /**
+     * Requests keyboard focus for the return-to-menu control.
+     */
     public void focusBackButton() {
         backButton.requestFocus();
     }

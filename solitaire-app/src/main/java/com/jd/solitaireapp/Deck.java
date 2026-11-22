@@ -65,6 +65,9 @@ public class Deck {
         if (cards.isEmpty()) { throw new NoSuchElementException("Deck is empty"); }
         return cards.removeLast();
     }
-    /** @return the number of cards still in the deck */
+    /**
+     * Counts cards remaining after draws.
+     * @return the number of cards still in the deck
+     */
     public int size() { return cards.size(); }
 }

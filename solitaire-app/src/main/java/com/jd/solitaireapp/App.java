@@ -4,8 +4,15 @@ import com.jd.solitaireapp.ui.AppNavigator;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-/** Desktop entry point, independent of the console demonstration. */
+/**
+ * JavaFX entry point that installs the menu, window limits, and close confirmation.
+ * The implicit public no-argument constructor is used by the JavaFX launcher.
+ */
 public class App extends Application {
+    /**
+     * Creates the navigator and shows the main window with guarded game closure.
+     * @param primaryStage window supplied by the JavaFX runtime
+     */
     @Override
     public void start(Stage primaryStage) {
         AppNavigator navigator = new AppNavigator();
@@ -19,7 +26,10 @@ public class App extends Application {
         primaryStage.show();
     }
 
-    /** Launches the JavaFX application. @param args JavaFX launch arguments */
+    /**
+     * Launches the JavaFX application.
+     * @param args JavaFX launch arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }

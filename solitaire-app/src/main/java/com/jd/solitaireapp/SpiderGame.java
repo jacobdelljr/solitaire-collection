@@ -50,9 +50,15 @@ public class SpiderGame extends SolitaireGame {
         while (deck.size() > 0) { stock.addCards(List.of(deck.draw())); }
     }
 
-    /** @return the mutable stock pile; use {@link #dealNextRow()} for legal dealing */
+    /**
+     * Exposes the face-down cards remaining for row deals.
+     * @return the mutable stock pile; use {@link #dealNextRow()} for legal dealing
+     */
     public CardPile getStock() { return stock; }
-    /** @return the number of complete King-to-Ace runs removed since reset */
+    /**
+     * Reports removed same-suit runs, with undone removals excluded.
+     * @return the number of complete King-to-Ace runs removed since reset
+     */
     public int getCompletedRuns() { return completedRuns; }
 
     /**
@@ -100,7 +106,13 @@ public class SpiderGame extends SolitaireGame {
         return top == null || (top.isFaceUp() && top.getRank() == first.getRank() + 1);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Checks for a face-up, descending, same-suit top segment in this tableau.
+     * @param from proposed source pile
+     * @param count positive number of top cards to pick up
+     * @return true if the segment is eligible; false for null or foreign piles,
+     *         invalid counts, or a segment violating pickup rules
+     */
     @Override
     public boolean canPickUp(CardPile from, int count) {
         if (from == null || !tableau.contains(from) || count <= 0 || count > from.size()) {

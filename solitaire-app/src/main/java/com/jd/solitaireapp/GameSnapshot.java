@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Saved position for one game and its current pile layout. Ordered card lists
  * and face orientations are copied independently of the mutable game. Original
- * card and pile identities are retained so restoration updates existing views;
+ * card and pile identities are retained so existing model references remain valid;
  * card suits and ranks are immutable and need no separate copies.
  * Undo history itself is managed by {@link SolitaireGame}, not by snapshots.
  */
@@ -49,9 +49,12 @@ public final class GameSnapshot {
     }
 
     /**
-     * Saves all piles, orientations and counters without recording an undo entry.
+     * Saves tableau piles and the stock, waste, foundations, or run counter
+     * recognized for Klondike and Spider, without recording an undo entry.
+     * Additional state in other subclasses is not captured.
      * @param game source game
-     * @return an independent saved position
+     * @return a saved position with copied ordering and orientations, retaining card identities
+     * @throws NullPointerException if game is null
      */
     public static GameSnapshot capture(SolitaireGame game) {
         return new GameSnapshot(game);
