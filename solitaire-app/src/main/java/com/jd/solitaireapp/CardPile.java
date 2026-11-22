@@ -13,11 +13,20 @@ public class CardPile {
     /** Card references in bottom-to-top order. */
     private final List<Card> cards = new ArrayList<>();
 
-    /** @return the top card without removal, or null if empty */
+    /**
+     * Inspects the last card in bottom-to-top order without removing it.
+     * @return the top card without removal, or null if empty
+     */
     public Card peek() { return isEmpty() ? null : cards.getLast(); }
-    /** @return the number of cards in the pile */
+    /**
+     * Counts the card references currently stored in this pile.
+     * @return the number of cards in the pile
+     */
     public int size() { return cards.size(); }
-    /** @return true if the pile contains no cards */
+    /**
+     * Checks whether the pile has any cards.
+     * @return true if the pile contains no cards
+     */
     public boolean isEmpty() { return cards.isEmpty(); }
     /**
      * Returns a live view; later pile changes are visible through it.

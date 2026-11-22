@@ -59,11 +59,20 @@ public class KlondikeGame extends SolitaireGame {
         while (deck.size() > 0) { stock.addCards(List.of(deck.draw())); }
     }
 
-    /** @return the mutable stock pile; use stock operations to preserve game rules */
+    /**
+     * Exposes the stock used for drawing and recycling.
+     * @return the mutable stock pile; use stock operations to preserve game rules
+     */
     public CardPile getStock() { return stock; }
-    /** @return the mutable waste pile; use game operations to move its top card */
+    /**
+     * Exposes drawn cards in bottom-to-top order.
+     * @return the mutable waste pile; use game operations to move its top card
+     */
     public CardPile getWaste() { return waste; }
-    /** @return an unmodifiable live list of the four mutable foundation piles */
+    /**
+     * Exposes foundations in their current layout order.
+     * @return an unmodifiable live list of the four mutable foundation piles
+     */
     public List<CardPile> getFoundations() { return Collections.unmodifiableList(foundations); }
 
     /**
@@ -134,7 +143,14 @@ public class KlondikeGame extends SolitaireGame {
         return false;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Checks for a face-up, descending, alternating-color tableau segment,
+     * or one face-up top card from this game's waste or a foundation.
+     * @param from proposed source pile
+     * @param count positive number of top cards to pick up
+     * @return true if the segment is eligible; false for null or foreign piles,
+     *         invalid counts, or a segment violating pickup rules
+     */
     @Override
     public boolean canPickUp(CardPile from, int count) {
         if (from == null || count <= 0 || count > from.size()) {

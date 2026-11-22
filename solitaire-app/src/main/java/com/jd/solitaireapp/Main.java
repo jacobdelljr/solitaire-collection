@@ -11,7 +11,8 @@ import java.util.List;
 public class Main {
     /**
      * Prints initial layouts, representative legal/rejected actions, stock
-     * operations, move counts, completion status, and deferred-feature notices.
+     * operations, move counts, and completion status. The legacy output still labels
+     * Turn 3, multi-suit Spider, and undo as deferred, although they are implemented.
      * @param args command-line arguments, ignored
      */
     public static void main(String[] args) {

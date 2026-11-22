@@ -21,6 +21,10 @@ public final class AppNavigator {
     private final Scene scene = new Scene(root, 1280, 800);
     private final MainMenuView menu = new MainMenuView(this::showGame);
 
+    /**
+     * Creates the styled scene with the mode menu initially displayed.
+     * @throws NullPointerException if the application stylesheet is missing
+     */
     public AppNavigator() {
         root.getStyleClass().add("application");
         scene.getStylesheets().add(Objects.requireNonNull(
@@ -31,6 +35,10 @@ public final class AppNavigator {
         root.getChildren().setAll(menu);
     }
 
+    /**
+     * Returns the scene whose root is reused for menu and game navigation.
+     * @return the navigator's scene
+     */
     public Scene getScene() {
         return scene;
     }
@@ -49,7 +57,12 @@ public final class AppNavigator {
         Platform.runLater(board::focusBackButton);
     }
 
-    /** Confirms window closure with the same safe defaults as menu navigation. */
+    /**
+     * Requests confirmation if a board is active, disposing it only on approval.
+     * Does not close the window itself; cancelling or dismissing the dialog keeps the game.
+     * @return true if closure may proceed, including when no board is active;
+     *         false if cancelled or another confirmation is already open
+     */
     public boolean requestClose() {
         if (!confirmLeave()) { return false; }
         disposeBoard();

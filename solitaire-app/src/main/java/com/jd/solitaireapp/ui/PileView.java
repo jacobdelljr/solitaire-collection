@@ -26,8 +26,25 @@ public final class PileView extends Pane {
         getChildren().add(view);
         return view;
     }
-    public enum Arrangement { TOP, TABLEAU, WASTE }
+    /** Layout strategies for the cards captured by a pile view. */
+    public enum Arrangement {
+        /** Overlays the top card and its covered predecessor for drag reveal. */
+        TOP,
+        /** Fans all cards vertically, with smaller offsets for face-down cards. */
+        TABLEAU,
+        /** Fans the requested number of top waste cards horizontally, retaining a covered predecessor. */
+        WASTE
+    }
 
+    /**
+     * Captures a pile's current cards and orientations in the chosen layout.
+     * Later model changes require rebuilding the view; an empty pile retains an outline.
+     * @param pile pile to render in bottom-to-top order
+     * @param width card width in layout units
+     * @param arrangement card layout strategy
+     * @param visibleWasteCards number of exposed waste positions; used only for WASTE
+     * @throws NullPointerException if pile or arrangement is null
+     */
     public PileView(CardPile pile, double width, Arrangement arrangement, int visibleWasteCards) {
         getStyleClass().add("card-pile");
         double height = width * 7 / 5;

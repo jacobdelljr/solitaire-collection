@@ -20,10 +20,26 @@ final class CardDealAnimation {
     private final List<CardView> destinations = new ArrayList<>();
     private ParallelTransition running;
 
+    /**
+     * Creates an animation controller for a dedicated overlay.
+     * @param overlay pane holding temporary moving card copies
+     */
     CardDealAnimation(Pane overlay) { this.overlay = overlay; }
 
+    /**
+     * Reports whether this controller holds a running deal.
+     * @return true until completion or cancellation clears the animation
+     */
     boolean isActive() { return running != null; }
 
+    /**
+     * Cancels the previous deal, hides destination views, and animates copies of
+     * their already-rendered faces or backs from the stock. Does not mutate cards.
+     * @param stock attached node supplying the animation origin
+     * @param cards destination views in stagger order
+     * @param finished callback after normal completion, or immediately for an empty list;
+     *         not invoked when cancelled
+     */
     void play(Node stock, List<CardView> cards, Runnable finished) {
         cancel();
         if (cards.isEmpty()) { finished.run(); return; }
@@ -56,7 +72,7 @@ final class CardDealAnimation {
         running.play();
     }
 
-    /** Stop callbacks before releasing nodes; cancellation never changes model state. */
+    /** Stops the deal without its completion callback, reveals destinations, and clears the overlay. */
     void cancel() {
         if (running != null) {
             running.stop();

@@ -9,6 +9,15 @@ import java.util.List;
 public final class SpiderBoardView extends GameBoardView {
     private final SpiderGame spider;
 
+    /**
+     * Creates a shuffled Spider game and renders its current piles.
+     * Initial deal animation starts separately through {@link #beginInitialDeal()}.
+     * @param mode display labels; does not override the numeric game configuration
+     * @param suits number of suits: 1, 2, or 4
+     * @param onBack callback invoked when the user requests the menu
+     * @throws IllegalArgumentException if suits is not 1, 2, or 4
+     * @throws NullPointerException if mode is null
+     */
     public SpiderBoardView(GameMode mode, int suits, Runnable onBack) {
         super(mode, new SpiderGame(suits), 10, onBack);
         this.spider = (SpiderGame) game;
@@ -20,6 +29,7 @@ public final class SpiderBoardView extends GameBoardView {
         return spider.getStock();
     }
 
+    /** Deals a legal row and animates its ten cards before displaying automatic removals. */
     @Override
     protected void playStock() {
         // Remember only the ten cards being dealt. The model may immediately remove

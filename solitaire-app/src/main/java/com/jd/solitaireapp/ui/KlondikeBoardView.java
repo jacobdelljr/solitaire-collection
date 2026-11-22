@@ -7,6 +7,15 @@ public final class KlondikeBoardView extends GameBoardView {
     private final KlondikeGame klondike;
     private final int drawCount;
 
+    /**
+     * Creates a shuffled Klondike game and renders its current piles.
+     * Initial deal animation starts separately through {@link #beginInitialDeal()}.
+     * @param mode display labels; does not override the numeric game configuration
+     * @param drawCount maximum cards per draw: 1 or 3
+     * @param onBack callback invoked when the user requests the menu
+     * @throws IllegalArgumentException if drawCount is not 1 or 3
+     * @throws NullPointerException if mode is null
+     */
     public KlondikeBoardView(GameMode mode, int drawCount, Runnable onBack) {
         super(mode, new KlondikeGame(drawCount), 7, onBack);
         this.klondike = (KlondikeGame) game;
@@ -19,6 +28,7 @@ public final class KlondikeBoardView extends GameBoardView {
         return klondike.getStock();
     }
 
+    /** Draws or recycles stock; successful Turn 3 draws animate the new waste cards. */
     @Override
     protected void playStock() {
         if (klondike.getStock().isEmpty()) {

@@ -31,17 +31,21 @@ public abstract class SolitaireGame {
         moveCount = 0;
     }
 
-    /** @return an unmodifiable live list of the mutable tableau piles */
+    /**
+     * Exposes the current tableau in column order.
+     * @return an unmodifiable live list of the mutable tableau piles
+     */
     public List<CardPile> getTableau() { return Collections.unmodifiableList(tableau); }
 
     /**
      * Transfers a validated top segment in order, exposes the source tableau's
      * remaining top card, counts one move, then invokes {@link #afterMove()}.
-     * Rejected moves change neither piles, orientations, nor the move count.
+     * Each successful transfer saves one undo entry including automatic effects.
+     * Rejected moves leave piles, orientations, counters, and history unchanged.
      * @param from source pile owned by this game
      * @param to destination pile owned by this game
      * @param count positive number of top cards to transfer
-     * @return true if moved; false if {@link #canMove} rejects the request
+     * @return true if moved; false if {@link #canMove(CardPile, CardPile, int)} rejects the request
      */
     public boolean moveCards(CardPile from, CardPile to, int count) {
         if (!canMove(from, to, count)) { return false; }
@@ -81,12 +85,12 @@ public abstract class SolitaireGame {
      * Subclasses opt into pickup support by overriding this method.
      * @param from source pile owned by this game
      * @param count number of top cards to pick up
-     * @return whether the source segment may be picked up
+     * @return whether the source segment may be picked up; false in this base implementation
      */
     public boolean canPickUp(CardPile from, int count) { return false; }
     /**
-     * Restores the position before the latest successful action, including its
-     * automatic flips and removals. Does not count a move or create new history.
+     * Restores the position before the latest successful action, reversing its
+     * transfer or stock operation and any automatic flips and removals. Does not count a move or create new history.
      * @return true if restored; false without mutation if history is empty
      */
     public boolean undo() {
@@ -96,6 +100,8 @@ public abstract class SolitaireGame {
         return true;
     }
     /**
+     * Counts successful player actions still represented in the current position.
+     * Undo restores the prior count; automatic effects do not count separately.
      * @return successful transfers, stock draws, recycles, and row deals since
      *         the last reset, excluding automatic flips and run removals
      */
