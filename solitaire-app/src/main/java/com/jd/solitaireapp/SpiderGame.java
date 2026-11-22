@@ -94,8 +94,16 @@ public class SpiderGame extends SolitaireGame {
      */
     @Override
     public boolean canMove(CardPile from, CardPile to, int count) {
-        if (from == null || to == null || from == to || !tableau.contains(from)
-                || !tableau.contains(to) || count <= 0 || count > from.size()) {
+        if (to == null || from == to || !tableau.contains(to) || !canPickUp(from, count)) { return false; }
+        Card first = from.getCards().get(from.size() - count);
+        Card top = to.peek();
+        return top == null || (top.isFaceUp() && top.getRank() == first.getRank() + 1);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean canPickUp(CardPile from, int count) {
+        if (from == null || !tableau.contains(from) || count <= 0 || count > from.size()) {
             return false;
         }
         List<Card> cards = from.getCards();
@@ -106,8 +114,7 @@ public class SpiderGame extends SolitaireGame {
             if (!card.isFaceUp() || card.getSuit() != first.getSuit()
                     || card.getRank() != first.getRank() - (i - start)) { return false; }
         }
-        Card top = to.peek();
-        return top == null || (top.isFaceUp() && top.getRank() == first.getRank() + 1);
+        return true;
     }
 
     /** Removes completed runs after a successful transfer without counting another move. */
