@@ -27,7 +27,7 @@ jobs:
 
       - name: Build, test, and generate reports
         # The wrapper need not have its executable bit set in Git.
-        run: sh ./mvnw --batch-mode --no-transfer-progress clean test site
+        run: sh ./mvnw --batch-mode --no-transfer-progress clean verify site
 
       - name: Verify both reports exist
         run: |

@@ -83,6 +83,41 @@
               <goal>prepare-agent</goal>
             </goals>
           </execution>
+          <execution>
+            <id>coverage-check</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <!-- Exclude presentation code from enforcement only; keep site reports complete. -->
+              <excludes>
+                <!-- JavaFX views, navigation, animations, and UI-only helpers. -->
+                <exclude>com/jd/solitaireapp/ui/**</exclude>
+                <!-- JavaFX application entry point and any nested classes. -->
+                <exclude>com/jd/solitaireapp/App.class</exclude>
+                <exclude>com/jd/solitaireapp/App$*.class</exclude>
+              </excludes>
+              <rules>
+                <rule>
+                  <!-- Apply both thresholds to all included application logic together. -->
+                  <element>BUNDLE</element>
+                  <limits>
+                    <limit>
+                      <counter>INSTRUCTION</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.80</minimum>
+                    </limit>
+                    <limit>
+                      <counter>BRANCH</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.70</minimum>
+                    </limit>
+                  </limits>
+                </rule>
+              </rules>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
 
