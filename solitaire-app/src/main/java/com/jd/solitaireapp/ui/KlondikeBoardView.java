@@ -20,8 +20,19 @@ public final class KlondikeBoardView extends GameBoardView {
     }
 
     @Override
-    protected boolean playStock() {
-        return klondike.getStock().isEmpty() ? klondike.recycleStock() : klondike.drawFromStock();
+    protected void playStock() {
+        if (klondike.getStock().isEmpty()) {
+            if (klondike.recycleStock()) { afterAction(); }
+            return;
+        }
+        int firstDrawn = klondike.getWaste().size();
+        if (!klondike.drawFromStock()) { return; }
+        afterAction();
+        if (drawCount == 3) {
+            animateDeal(pileView(klondike.getWaste()).cardViews().entrySet().stream()
+                    .filter(entry -> entry.getKey() >= firstDrawn)
+                    .map(java.util.Map.Entry::getValue).toList());
+        }
     }
 
     @Override

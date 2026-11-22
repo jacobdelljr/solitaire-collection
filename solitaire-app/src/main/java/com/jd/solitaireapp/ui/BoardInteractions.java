@@ -4,7 +4,6 @@ import com.jd.solitaireapp.CardPile;
 import com.jd.solitaireapp.SolitaireGame;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BooleanSupplier;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
@@ -13,7 +12,7 @@ import javafx.scene.layout.Pane;
 
 /** Shared mouse gestures. All legality and state mutations are delegated to the game. */
 final class BoardInteractions {
-    private record Target(CardPile pile, PileView view, BooleanSupplier stockAction) { }
+    private record Target(CardPile pile, PileView view, Runnable stockAction) { }
     private record Selection(Target source, int index) {
         int count() { return source.pile().size() - index; }
     }
@@ -37,7 +36,7 @@ final class BoardInteractions {
         this.afterAction = afterAction;
     }
 
-    void register(CardPile pile, PileView view, BooleanSupplier stockAction) {
+    void register(CardPile pile, PileView view, Runnable stockAction) {
         Target target = new Target(pile, view, stockAction);
         targets.add(target);
         view.setOnMousePressed(event -> {
@@ -99,7 +98,7 @@ final class BoardInteractions {
     private void click(Target target, Selection candidate) {
         if (target.stockAction() != null) {
             cancel();
-            if (target.stockAction().getAsBoolean()) { afterAction.run(); }
+            target.stockAction().run();
         } else if (selected != null && target != selected.source()
                 && game.moveCards(selected.source().pile(), target.pile(), selected.count())) {
             cancel();

@@ -35,6 +35,7 @@ public final class AppNavigator {
             case SPIDER_FOUR_SUITS -> new SpiderBoardView(mode, 4, () -> showMenu(mode));
         };
         root.getChildren().setAll(board);
+        board.beginInitialDeal();
         Platform.runLater(board::focusBackButton);
     }
 
