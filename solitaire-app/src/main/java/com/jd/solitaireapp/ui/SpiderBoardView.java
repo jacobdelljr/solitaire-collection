@@ -48,11 +48,7 @@ public final class SpiderBoardView extends GameBoardView {
 
     @Override
     protected double renderPiles(double left, double width, double gap) {
-        double stockX = left + 9 * (width + gap);
-        caption("STOCK", stockX, 10);
-        addPile(spider.getStock(), stockX, 36, width,
-                PileView.Arrangement.TOP, 1, "Stock");
-        double tableauY = 36 + width * 7 / 5 + 54;
+        double tableauY = 20;
         double bottom = tableauY;
         for (int i = 0; i < 10; i++) {
             bottom = Math.max(bottom, addPile(spider.getTableau().get(i), left + i * (width + gap),

@@ -71,6 +71,9 @@ public abstract class GameBoardView extends BorderPane {
         surface.addEventFilter(MouseEvent.ANY, event -> {
             if (pendingDeal || dealing.isActive()) { event.consume(); }
         });
+        fixedArea.addEventFilter(MouseEvent.ANY, event -> {
+            if (pendingDeal || dealing.isActive()) { event.consume(); }
+        });
         sceneProperty().addListener((observable, before, after) -> {
             if (after == null) { cancelDealing(); }
         });
@@ -301,6 +304,7 @@ public abstract class GameBoardView extends BorderPane {
         view.relocate(x, y);
         view.setAccessibleText(name + (pile.isEmpty() ? ", empty" : ""));
         parent.getChildren().add(view);
+        pileViews.put(pile, view);
         interactions.register(pile, view, pile == stockPile() ? this::playStock : null);
         return y + view.prefHeight(-1);
     }
